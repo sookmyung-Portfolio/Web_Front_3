@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route, Link } from 'react-router-dom';
 import CheckForm from './CheckForm';
-//import Auth from './Auth';
-import IdAuth from "./IdAuth";
-import NameAuth from './NameAuth';
 import Profile from './Profile';
 import DepComboBox from './DepComboBox';
 import NumComboBox from './NumComboBox';
@@ -23,61 +20,74 @@ function SignIn() {
   const [number, setNumber] = useState('');
   const [major, setMajor] = useState('');
 
+
   const handleSubmitClick = (event) => {
     event.preventDefault();
-   if(CheckForm({
-      idValue: finalId, pwValue: finalPassword, nameValue: finalName, numValue: number, depValue: major,
-    })){
-    axios.post('http://localhost:5050/register', {
-      headers: { "Content-Type":  "application/json" },
-      body: JSON.stringify({
-        idValue: finalId, pwValue: finalPassword, nameValue: finalName, numValue: number, depValue: major
-      }),	// json화 해버리기
-    })
-      .then(response => response.json())
-      .then(response => {
-          alert('가입되셨습니다.');
-          response ? 
-      	// Main 컴포넌트 호출 시 isLogin 이라는 props 값을 전달
-          <Route
-          isLogin={null}   //일단 로그인되어 있지 않은 상태로 넘김
-          path="/profile"
-          element={<Profile isLogin= {null} user={id}/>}
-        /> : 
+   
+    axios.post('http://localhost:5050/register',
+      // 클라이언트에서 서버로 request(요청)하며 보내주는 데이터
+      // 회원가입창에서 클라이언트가 입력하는 데이터
+      {
+        id: finalId,           
+        password: finalPassword,  // 숫자, 영어 대문자, 소문자, 특수기호, 8-20자  1234567#Aaa
+        name: userName,  // id개념, 한글이 아니라 영어로 보내기, 영어+숫자, 4-12글자 
+        classof: number,           
+        dept: major,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Accept': 'application/json',
+        },
+      })
+      // 그러면 서버에서 클라이언트로 response(응답)으로 
+      // {ok: true} 아니면 {ok: false}가 온다.
+      // .then((response) => {
+      //   console.log(response); // response.data로 해야?
+      // })
+      .then((result) => {
+        console.log(result);
+        console.log("signupDB!");
+        window.alert('회원가입이 되었습니다! 로그인 해주세요.');
         <Link to="/login"/>
-      });
-    }
+      })
+      .catch((error) => {
+        window.alert('회원가입이 정상적으로 되지 않았습니다.');
+        console.log(error);
+      })
   };
 
   const onIdCheckClick = (event) => {
     event.preventDefault();
-    const data = event.target.value; 
 
-    //// 이 아래는 작업용으로만 추가
-    /*if(IdAuth(id)){
-      if(id!== ""){
-        alert('사용 가능한 아이디입니다.'); //아이디 확인용
+    axios.post('http://localhost:5050/checkId',
+      // 클라이언트에서 서버로 request(요청)하며 보내주는 데이터
+      // 회원가입창에서 클라이언트가 입력하는 데이터
+      {
+        id: id,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Accept': 'application/json',
+        },
+      })
+      // 그러면 서버에서 클라이언트로 response(응답)으로 
+      // {ok: true} 아니면 {ok: false}가 온다.
+      // .then((response) => {
+      //   console.log(response); // response.data로 해야?
+      // })
+      .then((result) => {
         setFinalId(id);
-        //alert("finalId", finalId);
-      } else{
-        alert('아이디를 입력하세요.');
-      }
-    } else {
-      alert('사용할 수 없는 아이디입니다.');
-    }*/
-    axios.post('http://localhost:5050/checkId', {
-      headers: { "Content-Type":  "application/json" },
-      body: JSON.stringify(data),	// json화 해버리기
-    })
-    .then(function (response) {
-      console.log("사용가능");
-      alert("사용가능한 ID입니다");  //알람!
-      setFinalId(data);
-    })
-    .catch(function (error) {
-      console.log(error);
-      alert("다른 ID를 입력해주세요");
-    });
+        console.log(finalId, "finalId");
+        console.log("id!!!");
+        window.alert('사용할 수 있는 아이디입니다.');
+        <Link to="/login"/>
+      })
+      .catch((error) => {
+        window.alert('사용할 수 없는 아이디입니다.');
+        console.log(error);
+      })
   }
 
   const onPwCheckClick = (event) => {
@@ -99,6 +109,7 @@ function SignIn() {
   const onNameCheckClick = (event) => {
     event.preventDefault();
     const data = event.target.value;  
+    console.log(data, "데이터");
 
     /* 이 아래는 작업용으로만 추가
     if(NameAuth(nickName)){
@@ -111,14 +122,21 @@ function SignIn() {
       headers: { "Content-Type":  "application/json" },
       body: JSON.stringify(data),	// json화 해버리기
     })
-    .then(function (response) {
-      console.log("사용가능");
-      alert("사용가능한 닉네임입니다");  //알람!
-      setFinalName(data);
+    .then(function(response) {   //기존에는 response.data와 같은 형식으로 정보를 받아왔는데 만약 boolean값을 리턴한다면 어떤 항목?
+      console.log(response.data , "닉네임 확인 값");
+      if(response.data.success === true){   
+        console.log("사용가능");
+        alert("사용가능한 닉네임입니다");  //알람!
+        setFinalName(data);
+        console.log(data, "데이터");
+        console.log(finalName, "최종 닉네임");
+      }
+      else{
+        alert("다른 닉네임을 입력해주세요");
+      }
     })
     .catch(function (error) {
       console.log(error);
-      alert("다른 닉네임을 입력해주세요");
     });
   }
   
@@ -182,13 +200,14 @@ function SignIn() {
                 id="outlined-required"
                 label="닉네임"
                 value={userName}
-                onChange={({ target: { value } }) => setUserName(value)}   ///닉네임 중복확인  ok
+                name={userName}
+                onChange={({ target: { value } }) => setUserName(value)}  ///아이디 중복확인 ok
                 type="text"
-                placeholder="닉네임" 
-                minlength="3" maxlength="6"
-                size="small"
+                placeholder="닉네임"
+                minlength="2" maxlength="6" size="small"
               />
-            &nbsp; <Button variant="outlined" onClick = {onNameCheckClick} >중복 확인</Button>
+            &nbsp; <Button variant="outlined" value={userName} onClick = {onNameCheckClick}>중복 확인</Button>
+
             </div>
             <br/>
             <NumComboBox value={number}

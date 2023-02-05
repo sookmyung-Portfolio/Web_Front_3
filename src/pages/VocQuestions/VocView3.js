@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import './VocView3.css';
 import { Link } from 'react-router-dom';
 import { Container } from "@mui/material";
+import Comments from '../Comments';
 
 function GetData(Id) {
     const [question, setQuestion] = useState({});
@@ -44,6 +45,7 @@ function GetData(Id) {
                           }
                       </div>
                   </div>
+                  <Comments />
               </div>
           </>
       );

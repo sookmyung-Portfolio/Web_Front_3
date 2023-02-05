@@ -11,7 +11,7 @@ import DepComboBox from '../DepComboBox';
 const HandleQuestionSubmit = async({body}) => {
   const headers = {
     'Content-Type' : 'application/json',
-    'Authorization' : "Bearer cognito 의 access token"
+    'Authorization' : "Bearer cognito  access token"
   }
 
   const response = await axios.post('http://localhost:4040/quals', body, {headers: headers}).then((response) => {
@@ -23,13 +23,16 @@ const HandleQuestionSubmit = async({body}) => {
 
 function VocQuestion() {
   const [title, setTitle] = useState('');
+  const [username, setUsername] = useState('');
   const [content, setContent] = useState('');
   const [mainDept, setMainDept] = useState('');
   const [subDept, setSubDept] = useState('');
+  
 
   const body = {
       title: title,
-      content: content,
+      username: username,
+      content: content,      
       mainDept: mainDept,
       subDept: subDept
     }
@@ -44,6 +47,10 @@ function VocQuestion() {
             <div className="voc-view-row">
                 <label>제목</label>
                 <TextField size="small" onChange={(event) => setTitle(event.target.value)}></TextField>
+            </div>
+            <div className="voc-view-row">
+                <label>작성자</label>
+                <TextField size="small" onChange={(event) => setUsername(event.target.value)}></TextField>
             </div>
             <div className="voc-view-row">
                 <label>본전공</label>

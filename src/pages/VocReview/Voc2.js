@@ -17,7 +17,7 @@ function GetData() {
   }, []);
 
   const item = (Object.values(data)).map((item) => (
-    <CommonTableRow key={item._id}>
+    <CommonTableRow key={item.id}>
       <CommonTableColumn>{item.num}</CommonTableColumn>
       <CommonTableColumn>
         <Link to={`/voc2/${item._id}`}>
@@ -29,7 +29,7 @@ function GetData() {
     </CommonTableRow>
   ));
   // 문제: createAt값이 넘어오지 않음, 글번호란(첫번째 열)에 모든 정보가 적용됨  NaN
-
+  console.log(item);
   return item;
 }
 

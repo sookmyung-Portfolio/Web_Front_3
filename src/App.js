@@ -79,9 +79,6 @@ function App() {
             <Route path='/voc3' element={<Voc3 />} /> 
             <Route path='/voc3/question3' element={<VocQuestion3 />}  />
             <Route path='/voc3/:vocId' element={<VocView3 />}  />
-
-            
-
           </Routes>
         </main>
       </Router>
